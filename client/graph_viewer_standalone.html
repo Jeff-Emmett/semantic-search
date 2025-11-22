@@ -44,6 +44,19 @@
             font-weight: 600;
         }
 
+        .api-config {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(60, 60, 70, 0.5);
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .api-url {
+            color: #4a9eff;
+            word-break: break-all;
+        }
+
         .search-box {
             width: 100%;
             padding: 12px;
@@ -228,21 +241,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(40, 40, 50, 0.4);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(74, 158, 255, 0.5);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(74, 158, 255, 0.7);
+        .error-message {
+            color: #ff6b6b;
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 6px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -256,6 +261,10 @@
 
     <div id="controls">
         <h1>🧠 Semantic Knowledge Graph</h1>
+
+        <div class="api-config">
+            API: <span class="api-url" id="api-url-display">Detecting...</span>
+        </div>
 
         <input type="text" id="search-input" class="search-box" placeholder="Search your notes...">
 
@@ -293,18 +302,50 @@
                 <span class="stats-value" id="category-count">0</span>
             </div>
         </div>
+
+        <div id="error-container"></div>
     </div>
 
     <div id="node-info"></div>
 
-    <script src="//unpkg.com/3d-force-graph"></script>
+    <script src="https://unpkg.com/3d-force-graph"></script>
     <script>
-        // Use WSL IP if accessing from Windows, or localhost if in WSL
-        const API_URL = window.location.hostname === 'localhost'
-            ? 'http://172.22.168.84:8000'  // WSL IP
-            : 'http://localhost:8000';
+        // Try multiple API URLs
+        const POSSIBLE_URLS = [
+            'http://172.22.168.84:8000',  // WSL IP
+            'http://localhost:8000',       // Localhost
+            'http://127.0.0.1:8000'        // 127.0.0.1
+        ];
+
+        let API_URL = null;
         let graph;
         let currentData = null;
+
+        // Test API connectivity
+        async function findWorkingAPI() {
+            for (const url of POSSIBLE_URLS) {
+                try {
+                    const response = await fetch(`${url}/health`, {
+                        method: 'GET',
+                        signal: AbortSignal.timeout(2000)
+                    });
+                    if (response.ok) {
+                        API_URL = url;
+                        document.getElementById('api-url-display').textContent = url;
+                        console.log('✅ Connected to API:', url);
+                        return true;
+                    }
+                } catch (e) {
+                    console.log('❌ Failed:', url, e.message);
+                }
+            }
+            return false;
+        }
+
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+        }
 
         // Initialize 3D graph
         function initGraph() {
@@ -324,7 +365,6 @@
                 })
                 .d3Force('charge').strength(-100);
 
-            // Enable controls
             graph.enableNodeDrag(true);
             graph.enableNavigationControls(true);
             graph.showNavInfo(false);
@@ -332,6 +372,11 @@
 
         // Load graph data
         async function loadGraph(query = null) {
+            if (!API_URL) {
+                showError('API not connected. Please ensure services are running.');
+                return;
+            }
+
             const loading = document.getElementById('loading');
             loading.style.display = 'block';
 
@@ -341,8 +386,7 @@
 
                 const body = {
                     limit: parseInt(limit),
-                    similarity_threshold: parseFloat(threshold),
-                    filter_metadata: { source: "obsidian" }
+                    similarity_threshold: parseFloat(threshold)
                 };
 
                 if (query) {
@@ -363,8 +407,8 @@
                 currentData = data;
 
                 // Update stats
-                document.getElementById('node-count').textContent = data.node_count;
-                document.getElementById('edge-count').textContent = data.edge_count;
+                document.getElementById('node-count').textContent = data.nodes.length;
+                document.getElementById('edge-count').textContent = data.edges.length;
 
                 const categories = new Set(data.nodes.map(n => n.category));
                 document.getElementById('category-count').textContent = categories.size;
@@ -372,9 +416,11 @@
                 // Update graph
                 graph.graphData(data);
 
+                document.getElementById('error-container').innerHTML = '';
+
             } catch (error) {
                 console.error('Error loading graph:', error);
-                alert('Failed to load graph data. Is the API running?');
+                showError(`Failed to load graph: ${error.message}`);
             } finally {
                 loading.style.display = 'none';
             }
@@ -424,8 +470,6 @@
             `;
 
             infoPanel.classList.add('visible');
-
-            // Highlight connected nodes
             highlightConnectedNodes(node);
         }
 
@@ -464,9 +508,16 @@
         });
 
         // Initialize on load
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             initGraph();
-            loadRandomGraph();
+
+            const connected = await findWorkingAPI();
+            if (connected) {
+                loadRandomGraph();
+            } else {
+                document.getElementById('loading').style.display = 'none';
+                showError('Cannot connect to API. Please ensure Docker services are running:<br>docker-compose up -d');
+            }
         });
     </script>
 </body>

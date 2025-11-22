@@ -70,6 +70,12 @@ class StatsResponse(BaseModel):
     collection_name: str
     embedding_dimension: int
 
+class GraphQuery(BaseModel):
+    query: Optional[str] = None
+    limit: int = Field(default=100, ge=10, le=300)
+    similarity_threshold: float = Field(default=0.6, ge=0.3, le=0.95)
+    filter_metadata: Optional[Dict[str, Any]] = None
+
 # Startup: Create collection
 @app.on_event("startup")
 async def startup_event():
@@ -320,12 +326,7 @@ async def delete_document(doc_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/graph")
-async def get_semantic_graph(
-    query: Optional[str] = None,
-    limit: int = 100,
-    similarity_threshold: float = 0.6,
-    filter_metadata: Optional[Dict[str, Any]] = None
-):
+async def get_semantic_graph(graph_query: GraphQuery):
     """
     Get semantic similarity graph for visualization.
     Returns nodes and edges based on embedding similarity.
@@ -333,26 +334,26 @@ async def get_semantic_graph(
     try:
         # Build filter
         search_filter = None
-        if filter_metadata:
+        if graph_query.filter_metadata:
             conditions = [
                 FieldCondition(
                     key=key,
                     match=MatchValue(value=value)
                 )
-                for key, value in filter_metadata.items()
+                for key, value in graph_query.filter_metadata.items()
             ]
             search_filter = Filter(must=conditions)
 
         # Get documents
-        if query:
+        if graph_query.query:
             # Search for relevant documents
-            embeddings = await get_embeddings([query])
+            embeddings = await get_embeddings([graph_query.query])
             query_embedding = embeddings[0]
 
             results = qdrant.search(
                 collection_name=COLLECTION_NAME,
                 query_vector=query_embedding,
-                limit=limit,
+                limit=graph_query.limit,
                 query_filter=search_filter
             )
 
@@ -370,7 +371,7 @@ async def get_semantic_graph(
             scroll_result = qdrant.scroll(
                 collection_name=COLLECTION_NAME,
                 scroll_filter=search_filter,
-                limit=limit,
+                limit=graph_query.limit,
                 with_vectors=True
             )
 
@@ -414,7 +415,7 @@ async def get_semantic_graph(
                 vec_b = np.array(node_b["vector"])
                 similarity = np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b))
 
-                if similarity >= similarity_threshold:
+                if similarity >= graph_query.similarity_threshold:
                     edges.append({
                         "source": node_a["id"],
                         "target": node_b["id"],
