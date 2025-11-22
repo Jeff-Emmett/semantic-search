@@ -1,0 +1,55 @@
+# Multi-stage build for optimized production image
+FROM python:3.11-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python dependencies and create wheels
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels \
+    fastapi==0.104.1 \
+    uvicorn[standard]==0.24.0 \
+    sentence-transformers==3.3.1
+
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels \
+    torch --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Runtime stage
+FROM python:3.11-slim
+
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+WORKDIR /app
+
+# Copy wheels from builder
+COPY --from=builder /app/wheels /wheels
+
+# Install dependencies from wheels
+RUN pip install --no-cache /wheels/* \
+    && rm -rf /wheels
+
+# Copy application code
+COPY services/embedding_service.py .
+
+# Create cache directory for models (owned by appuser)
+RUN mkdir -p /app/.cache && chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Pre-download model during build (optional, uncomment to include model in image)
+# This increases image size but reduces first-run startup time
+# RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
+EXPOSE 8001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8001/health').read()" || exit 1
+
+CMD ["uvicorn", "embedding_service:app", "--host", "0.0.0.0", "--port", "8001"]

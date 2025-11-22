@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Knowledge Graph - 3D Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        #graph-container {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 30, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: rgba(40, 40, 50, 0.8);
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        .button {
+            padding: 10px 18px;
+            margin: 5px 5px 5px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #b0b0b0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(74, 158, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            width: 16px;
+            height: 16px;
+            background: #4a9eff;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .stats {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(40, 40, 50, 0.6);
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+        }
+
+        .stats-label {
+            color: #888;
+        }
+
+        .stats-value {
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        #node-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 20, 30, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        #node-info.visible {
+            display: block;
+        }
+
+        .node-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .node-text {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #c0c0c0;
+        }
+
+        .node-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            background: rgba(102, 126, 234, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #a0c4ff;
+        }
+
+        .node-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: rgba(74, 158, 255, 0.2);
+            border-radius: 6px;
+            color: #4a9eff;
+            text-decoration: none;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .node-link:hover {
+            background: rgba(74, 158, 255, 0.3);
+        }
+
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 30, 0.95);
+            padding: 30px 50px;
+            border-radius: 12px;
+            font-size: 18px;
+            color: #4a9eff;
+            z-index: 200;
+        }
+
+        .spinner {
+            border: 3px solid rgba(74, 158, 255, 0.2);
+            border-top: 3px solid #4a9eff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(40, 40, 50, 0.4);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(74, 158, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(74, 158, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        Loading your knowledge graph...
+    </div>
+
+    <div id="graph-container"></div>
+
+    <div id="controls">
+        <h1>🧠 Semantic Knowledge Graph</h1>
+
+        <input type="text" id="search-input" class="search-box" placeholder="Search your notes...">
+
+        <button class="button" onclick="searchGraph()">🔍 Search</button>
+        <button class="button" onclick="loadRandomGraph()">🎲 Random</button>
+        <button class="button" onclick="resetCamera()">🎯 Reset View</button>
+
+        <div class="slider-container">
+            <label>
+                Node Limit: <span id="limit-value">100</span>
+            </label>
+            <input type="range" id="limit-slider" min="20" max="200" value="100" step="10"
+                   oninput="document.getElementById('limit-value').textContent = this.value">
+        </div>
+
+        <div class="slider-container">
+            <label>
+                Similarity Threshold: <span id="threshold-value">0.60</span>
+            </label>
+            <input type="range" id="threshold-slider" min="0.4" max="0.9" value="0.6" step="0.05"
+                   oninput="document.getElementById('threshold-value').textContent = this.value">
+        </div>
+
+        <div class="stats">
+            <div class="stats-item">
+                <span class="stats-label">Nodes:</span>
+                <span class="stats-value" id="node-count">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Connections:</span>
+                <span class="stats-value" id="edge-count">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Categories:</span>
+                <span class="stats-value" id="category-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="node-info"></div>
+
+    <script src="//unpkg.com/3d-force-graph"></script>
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let graph;
+        let currentData = null;
+
+        // Initialize 3D graph
+        function initGraph() {
+            const elem = document.getElementById('graph-container');
+            graph = ForceGraph3D()(elem)
+                .backgroundColor('#0a0a0a')
+                .nodeLabel('title')
+                .nodeAutoColorBy('category')
+                .nodeVal(node => 2)
+                .nodeOpacity(0.9)
+                .linkWidth(link => link.similarity * 2)
+                .linkOpacity(0.4)
+                .linkColor(() => 'rgba(74, 158, 255, 0.3)')
+                .onNodeClick(node => showNodeInfo(node))
+                .onNodeHover(node => {
+                    elem.style.cursor = node ? 'pointer' : null;
+                })
+                .d3Force('charge').strength(-100);
+
+            // Enable controls
+            graph.enableNodeDrag(true);
+            graph.enableNavigationControls(true);
+            graph.showNavInfo(false);
+        }
+
+        // Load graph data
+        async function loadGraph(query = null) {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            try {
+                const limit = document.getElementById('limit-slider').value;
+                const threshold = document.getElementById('threshold-slider').value;
+
+                const body = {
+                    limit: parseInt(limit),
+                    similarity_threshold: parseFloat(threshold),
+                    filter_metadata: { source: "obsidian" }
+                };
+
+                if (query) {
+                    body.query = query;
+                }
+
+                const response = await fetch(`${API_URL}/graph`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentData = data;
+
+                // Update stats
+                document.getElementById('node-count').textContent = data.node_count;
+                document.getElementById('edge-count').textContent = data.edge_count;
+
+                const categories = new Set(data.nodes.map(n => n.category));
+                document.getElementById('category-count').textContent = categories.size;
+
+                // Update graph
+                graph.graphData(data);
+
+            } catch (error) {
+                console.error('Error loading graph:', error);
+                alert('Failed to load graph data. Is the API running?');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Search graph
+        function searchGraph() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!query) {
+                alert('Please enter a search query');
+                return;
+            }
+            loadGraph(query);
+        }
+
+        // Load random sample
+        function loadRandomGraph() {
+            loadGraph();
+        }
+
+        // Reset camera
+        function resetCamera() {
+            graph.cameraPosition({ x: 0, y: 0, z: 1000 }, { x: 0, y: 0, z: 0 }, 1000);
+        }
+
+        // Show node details
+        function showNodeInfo(node) {
+            const infoPanel = document.getElementById('node-info');
+
+            let tagsHtml = '';
+            if (node.tags && node.tags.length > 0) {
+                tagsHtml = '<div class="node-tags">' +
+                    node.tags.map(tag => `<span class="tag">#${tag}</span>`).join('') +
+                    '</div>';
+            }
+
+            infoPanel.innerHTML = `
+                <div class="node-title">${node.title}</div>
+                ${tagsHtml}
+                <div class="node-text">${node.text}</div>
+                <div style="font-size: 11px; color: #666; margin-bottom: 10px;">
+                    📁 ${node.file_path || 'N/A'}
+                </div>
+                <a href="${node.url}" class="node-link" target="_blank">
+                    Open in Obsidian →
+                </a>
+            `;
+
+            infoPanel.classList.add('visible');
+
+            // Highlight connected nodes
+            highlightConnectedNodes(node);
+        }
+
+        // Highlight nodes connected to selected node
+        function highlightConnectedNodes(selectedNode) {
+            if (!currentData) return;
+
+            const connectedNodeIds = new Set();
+            currentData.edges.forEach(edge => {
+                if (edge.source === selectedNode.id) connectedNodeIds.add(edge.target);
+                if (edge.target === selectedNode.id) connectedNodeIds.add(edge.source);
+            });
+
+            graph.nodeColor(node => {
+                if (node.id === selectedNode.id) return '#ff4444';
+                if (connectedNodeIds.has(node.id)) return '#44ff44';
+                return graph.nodeAutoColorBy()(node);
+            });
+        }
+
+        // Handle Enter key in search
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchGraph();
+            }
+        });
+
+        // Hide node info when clicking background
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#node-info') && !e.target.closest('canvas')) {
+                document.getElementById('node-info').classList.remove('visible');
+                if (currentData) {
+                    graph.nodeColor(graph.nodeAutoColorBy());
+                }
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initGraph();
+            loadRandomGraph();
+        });
+    </script>
+</body>
+</html>
