@@ -13,9 +13,17 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
             color: #e0e0e0;
             overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-mode {
+            background: #0a0a0a;
+        }
+
+        body.light-mode {
+            background: #f5f5f5;
         }
 
         #graph-container {
@@ -27,57 +35,197 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(20, 20, 30, 0.95);
-            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 100;
-            max-width: 400px;
+            max-width: 420px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode #controls {
+            background: rgba(20, 20, 30, 0.95);
+            color: #e0e0e0;
+        }
+
+        body.light-mode #controls {
+            background: rgba(255, 255, 255, 0.95);
+            color: #2a2a2a;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        #controls.minimized {
+            max-width: 60px;
+            overflow: hidden;
+        }
+
+        #controls.minimized .controls-content {
+            display: none;
+        }
+
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            padding-bottom: 10px;
+        }
+
+        #controls.minimized .controls-header {
+            padding: 20px 15px;
+            justify-content: center;
+        }
+
+        .controls-content {
+            padding: 0 20px 20px 20px;
         }
 
         h1 {
             font-size: 20px;
-            margin-bottom: 15px;
-            color: #4a9eff;
             font-weight: 600;
+            transition: color 0.3s;
         }
 
-        .api-config {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(60, 60, 70, 0.5);
-            border-radius: 6px;
-            font-size: 11px;
-        }
-
-        .api-url {
+        body.dark-mode h1 {
             color: #4a9eff;
-            word-break: break-all;
+        }
+
+        body.light-mode h1 {
+            color: #2563eb;
+        }
+
+        #controls.minimized h1 {
+            display: none;
+        }
+
+        .minimize-btn {
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .minimize-btn {
+            border-color: rgba(74, 158, 255, 0.3);
+            color: #4a9eff;
+        }
+
+        body.light-mode .minimize-btn {
+            border-color: rgba(37, 99, 235, 0.3);
+            color: #2563eb;
+        }
+
+        .minimize-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: rgba(60, 60, 70, 0.5);
+        }
+
+        body.light-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(100, 100, 100, 0.3);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .theme-switch.active {
+            background: #4a9eff;
+        }
+
+        .theme-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .theme-switch.active .theme-slider {
+            transform: translateX(24px);
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin: 15px 0 8px 0;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .section-title {
+            color: #888;
+        }
+
+        body.light-mode .section-title {
+            color: #666;
         }
 
         .search-box {
             width: 100%;
             padding: 12px;
-            margin-bottom: 15px;
-            background: rgba(40, 40, 50, 0.8);
-            border: 1px solid rgba(74, 158, 255, 0.3);
+            margin-bottom: 10px;
+            border: 1px solid;
             border-radius: 8px;
-            color: #e0e0e0;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .search-box {
+            background: rgba(40, 40, 50, 0.8);
+            border-color: rgba(74, 158, 255, 0.3);
+            color: #e0e0e0;
+        }
+
+        body.light-mode .search-box {
+            background: white;
+            border-color: rgba(37, 99, 235, 0.3);
+            color: #2a2a2a;
         }
 
         .search-box:focus {
             outline: none;
+        }
+
+        body.dark-mode .search-box:focus {
             border-color: #4a9eff;
         }
 
+        body.light-mode .search-box:focus {
+            border-color: #2563eb;
+        }
+
         .button {
-            padding: 10px 18px;
+            padding: 10px 16px;
             margin: 5px 5px 5px 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 8px;
             color: white;
@@ -85,6 +233,14 @@
             font-size: 13px;
             font-weight: 500;
             transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        body.dark-mode .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.light-mode .button {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
         }
 
         .button:hover {
@@ -96,6 +252,14 @@
             transform: translateY(0);
         }
 
+        .button-secondary {
+            background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%);
+        }
+
+        body.light-mode .button-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
         .slider-container {
             margin: 15px 0;
         }
@@ -104,32 +268,119 @@
             display: block;
             margin-bottom: 8px;
             font-size: 13px;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .slider-container label {
             color: #b0b0b0;
+        }
+
+        body.light-mode .slider-container label {
+            color: #666;
         }
 
         input[type="range"] {
             width: 100%;
             height: 6px;
-            background: rgba(74, 158, 255, 0.2);
             border-radius: 3px;
             outline: none;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode input[type="range"] {
+            background: rgba(74, 158, 255, 0.2);
+        }
+
+        body.light-mode input[type="range"] {
+            background: rgba(37, 99, 235, 0.2);
         }
 
         input[type="range"]::-webkit-slider-thumb {
             width: 16px;
             height: 16px;
-            background: #4a9eff;
             cursor: pointer;
             border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode input[type="range"]::-webkit-slider-thumb {
+            background: #4a9eff;
+        }
+
+        body.light-mode input[type="range"]::-webkit-slider-thumb {
+            background: #2563eb;
+        }
+
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0;
+        }
+
+        .chip {
+            padding: 6px 12px;
+            border: 1px solid;
+            border-radius: 16px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        body.dark-mode .chip {
+            background: rgba(40, 40, 50, 0.8);
+            border-color: rgba(74, 158, 255, 0.3);
+            color: #e0e0e0;
+        }
+
+        body.light-mode .chip {
+            background: white;
+            border-color: rgba(37, 99, 235, 0.3);
+            color: #2a2a2a;
+        }
+
+        .chip:hover {
+            transform: scale(1.05);
+        }
+
+        body.dark-mode .chip:hover {
+            background: rgba(74, 158, 255, 0.2);
+        }
+
+        body.light-mode .chip:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .chip.active {
+            color: white;
+        }
+
+        body.dark-mode .chip.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+        }
+
+        body.light-mode .chip.active {
+            background: #2563eb;
+            border-color: #2563eb;
         }
 
         .stats {
             margin-top: 15px;
             padding: 12px;
-            background: rgba(40, 40, 50, 0.6);
             border-radius: 8px;
             font-size: 12px;
             line-height: 1.6;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode .stats {
+            background: rgba(40, 40, 50, 0.6);
+        }
+
+        body.light-mode .stats {
+            background: rgba(0, 0, 0, 0.05);
         }
 
         .stats-item {
@@ -139,78 +390,107 @@
         }
 
         .stats-label {
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .stats-label {
             color: #888;
         }
 
+        body.light-mode .stats-label {
+            color: #666;
+        }
+
         .stats-value {
-            color: #4a9eff;
             font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode .stats-value {
+            color: #4a9eff;
+        }
+
+        body.light-mode .stats-value {
+            color: #2563eb;
         }
 
         #node-info {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(20, 20, 30, 0.95);
+            max-width: 350px;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid;
             z-index: 100;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            display: none;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        body.dark-mode #node-info {
+            background: rgba(20, 20, 30, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode #node-info {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 0, 0, 0.1);
         }
 
         #node-info.visible {
-            display: block;
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
         }
 
-        .node-title {
+        #node-info h2 {
+            margin-bottom: 12px;
             font-size: 18px;
-            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        body.dark-mode #node-info h2 {
             color: #4a9eff;
-            font-weight: 600;
         }
 
-        .node-text {
+        body.light-mode #node-info h2 {
+            color: #2563eb;
+        }
+
+        #node-info p {
+            margin: 8px 0;
             font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            color: #c0c0c0;
+            line-height: 1.5;
+            transition: color 0.3s;
         }
 
-        .node-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
+        body.dark-mode #node-info p {
+            color: #b0b0b0;
         }
 
-        .tag {
-            background: rgba(102, 126, 234, 0.3);
+        body.light-mode #node-info p {
+            color: #666;
+        }
+
+        #node-info .category-badge {
+            display: inline-block;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 11px;
-            color: #a0c4ff;
+            margin-top: 8px;
+            transition: background 0.3s;
         }
 
-        .node-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
+        body.dark-mode #node-info .category-badge {
             background: rgba(74, 158, 255, 0.2);
-            border-radius: 6px;
-            color: #4a9eff;
-            text-decoration: none;
-            font-size: 12px;
-            transition: background 0.2s;
         }
 
-        .node-link:hover {
-            background: rgba(74, 158, 255, 0.3);
+        body.light-mode #node-info .category-badge {
+            background: rgba(37, 99, 235, 0.2);
         }
 
         #loading {
@@ -218,108 +498,238 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(20, 20, 30, 0.95);
-            padding: 30px 50px;
+            padding: 20px 40px;
             border-radius: 12px;
-            font-size: 18px;
+            font-size: 16px;
+            z-index: 1000;
+            display: none;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode #loading {
+            background: rgba(20, 20, 30, 0.95);
             color: #4a9eff;
-            z-index: 200;
         }
 
-        .spinner {
-            border: 3px solid rgba(74, 158, 255, 0.2);
-            border-top: 3px solid #4a9eff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+        body.light-mode #loading {
+            background: rgba(255, 255, 255, 0.95);
+            color: #2563eb;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        #error-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 600px;
+            z-index: 1000;
         }
 
         .error-message {
-            color: #ff6b6b;
-            padding: 10px;
-            margin: 10px 0;
-            background: rgba(255, 107, 107, 0.1);
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(255, 50, 50, 0.3);
+        }
+
+        body.dark-mode .error-message {
+            background: rgba(255, 50, 50, 0.95);
+        }
+
+        body.light-mode .error-message {
+            background: rgba(220, 38, 38, 0.95);
+        }
+
+        .legend {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode .legend {
+            background: rgba(40, 40, 50, 0.6);
+        }
+
+        body.light-mode .legend {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
     </style>
 </head>
-<body>
-    <div id="loading">
-        <div class="spinner"></div>
-        Loading your knowledge graph...
-    </div>
-
+<body class="dark-mode">
     <div id="graph-container"></div>
 
     <div id="controls">
-        <h1>🧠 Semantic Knowledge Graph</h1>
-
-        <div class="api-config">
-            API: <span class="api-url" id="api-url-display">Detecting...</span>
+        <div class="controls-header">
+            <h1>🌐 Knowledge Graph</h1>
+            <button class="minimize-btn" onclick="toggleMinimize()">
+                <span id="minimize-icon">−</span>
+            </button>
         </div>
 
-        <input type="text" id="search-input" class="search-box" placeholder="Search your notes...">
-
-        <button class="button" onclick="searchGraph()">🔍 Search</button>
-        <button class="button" onclick="loadRandomGraph()">🎲 Random</button>
-        <button class="button" onclick="resetCamera()">🎯 Reset View</button>
-
-        <div class="slider-container">
-            <label>
-                Node Limit: <span id="limit-value">100</span>
-            </label>
-            <input type="range" id="limit-slider" min="20" max="200" value="100" step="10"
-                   oninput="document.getElementById('limit-value').textContent = this.value">
-        </div>
-
-        <div class="slider-container">
-            <label>
-                Similarity Threshold: <span id="threshold-value">0.60</span>
-            </label>
-            <input type="range" id="threshold-slider" min="0.4" max="0.9" value="0.6" step="0.05"
-                   oninput="document.getElementById('threshold-value').textContent = this.value">
-        </div>
-
-        <div class="stats">
-            <div class="stats-item">
-                <span class="stats-label">Nodes:</span>
-                <span class="stats-value" id="node-count">0</span>
+        <div class="controls-content">
+            <div class="theme-toggle">
+                <span>🌙</span>
+                <div class="theme-switch" onclick="toggleTheme()">
+                    <div class="theme-slider"></div>
+                </div>
+                <span>☀️</span>
             </div>
-            <div class="stats-item">
-                <span class="stats-label">Connections:</span>
-                <span class="stats-value" id="edge-count">0</span>
+
+            <div class="section-title">🔍 Search & Filter</div>
+            <input type="text" id="search-input" class="search-box" placeholder="Search nodes in real-time...">
+
+            <button class="button button-secondary" onclick="clearFilters()">✨ Clear All Filters</button>
+            <button class="button" onclick="loadRandomGraph()">🔄 Reload Data</button>
+            <button class="button" onclick="centerGraph()">📍 Center Graph</button>
+            <button class="button" onclick="toggleScenicMode()">
+                <span id="scenic-icon">🎬</span> <span id="scenic-text">Scenic Mode</span>
+            </button>
+
+            <div class="section-title">📂 Categories</div>
+            <div id="category-filters" class="filter-chips">
+                <!-- Dynamically populated -->
             </div>
-            <div class="stats-item">
-                <span class="stats-label">Categories:</span>
-                <span class="stats-value" id="category-count">0</span>
+
+            <div class="slider-container">
+                <label>
+                    Similarity Threshold: <span id="threshold-value">0.50</span>
+                </label>
+                <input type="range" id="threshold-slider" min="0.3" max="0.9" value="0.5" step="0.05"
+                       oninput="updateSlider('threshold')">
+            </div>
+
+            <div class="stats">
+                <div class="stats-item">
+                    <span class="stats-label">Total Nodes:</span>
+                    <span class="stats-value" id="total-node-count">0</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Visible Nodes:</span>
+                    <span class="stats-value" id="node-count">0</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Connections:</span>
+                    <span class="stats-value" id="edge-count">0</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Highlighted:</span>
+                    <span class="stats-value" id="highlighted-count">0</span>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffd700;"></div>
+                    <span>Highlighted (search match)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4a9eff;"></div>
+                    <span>Category colors</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(150,150,150,0.3);"></div>
+                    <span>Filtered out</span>
+                </div>
+            </div>
+
+            <div class="section-title">🧠 Semantic Analysis</div>
+            <button class="button" onclick="analyzeSemanticClusters()">📊 Analyze Clusters</button>
+
+            <div id="semantic-insights" style="margin-top: 10px; font-size: 11px; line-height: 1.6;">
+                <div style="padding: 8px; border-radius: 6px; background: rgba(74, 158, 255, 0.1);">
+                    Click "Analyze Clusters" to discover semantic groupings and content gaps
+                </div>
             </div>
         </div>
-
-        <div id="error-container"></div>
     </div>
 
-    <div id="node-info"></div>
+    <div id="node-info">
+        <h2 id="node-title">Node Title</h2>
+        <p id="node-text"></p>
+        <div>
+            <span class="category-badge" id="node-category"></span>
+        </div>
+    </div>
 
+    <div id="loading">Loading graph data...</div>
+    <div id="error-container"></div>
+
+    <script src="https://unpkg.com/three"></script>
     <script src="https://unpkg.com/3d-force-graph"></script>
+
     <script>
-        // Try multiple API URLs
+        // API Configuration
         const POSSIBLE_URLS = [
-            'http://172.22.168.84:8000',  // WSL IP
-            'http://localhost:8000',       // Localhost
-            'http://127.0.0.1:8000'        // 127.0.0.1
+            'http://localhost:8000',
+            'http://127.0.0.1:8000',
+            'http://172.22.168.84:8000'
         ];
 
         let API_URL = null;
         let graph;
         let currentData = null;
+        let allNodes = [];
+        let allLinks = [];
+        let highlightedNodes = new Set();
+        let activeCategories = new Set();
+        let searchTerm = '';
+        let isDarkMode = true;
+        let scenicMode = false;
+        let scenicAnimation = null;
+
+        // Theme toggle
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
+            document.querySelector('.theme-switch').classList.toggle('active');
+
+            // Update graph background
+            if (graph) {
+                graph.backgroundColor(isDarkMode ? '#0a0a0a' : '#f5f5f5');
+
+                // Reassign colors to all nodes for new theme
+                if (allNodes.length > 0) {
+                    const categories = [...new Set(allNodes.map(n => n.category))];
+                    categories.forEach((cat, idx) => {
+                        allNodes.forEach(node => {
+                            if (node.category === cat) {
+                                node.__color = getColorForCategory(cat, idx);
+                            }
+                        });
+                    });
+
+                    // Update category chips colors
+                    updateCategoryFilters(categories);
+
+                    // Refresh the graph
+                    applyFilters();
+                }
+            }
+        }
+
+        // Minimize toggle
+        function toggleMinimize() {
+            const controls = document.getElementById('controls');
+            const icon = document.getElementById('minimize-icon');
+            controls.classList.toggle('minimized');
+            icon.textContent = controls.classList.contains('minimized') ? '+' : '−';
+        }
 
         // Test API connectivity
         async function findWorkingAPI() {
@@ -331,12 +741,11 @@
                     });
                     if (response.ok) {
                         API_URL = url;
-                        document.getElementById('api-url-display').textContent = url;
-                        console.log('✅ Connected to API:', url);
+                        console.log('✓ Connected to API:', url);
                         return true;
                     }
                 } catch (e) {
-                    console.log('❌ Failed:', url, e.message);
+                    console.log('✗ Failed:', url);
                 }
             }
             return false;
@@ -345,32 +754,128 @@
         function showError(message) {
             const errorContainer = document.getElementById('error-container');
             errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
         }
 
         // Initialize 3D graph
         function initGraph() {
             const elem = document.getElementById('graph-container');
             graph = ForceGraph3D()(elem)
-                .backgroundColor('#0a0a0a')
-                .nodeLabel('title')
-                .nodeAutoColorBy('category')
-                .nodeVal(node => 2)
-                .nodeOpacity(0.9)
-                .linkWidth(link => link.similarity * 2)
-                .linkOpacity(0.4)
-                .linkColor(() => 'rgba(74, 158, 255, 0.3)')
+                .backgroundColor(isDarkMode ? '#0a0a0a' : '#f5f5f5')
+                .nodeLabel(node => `<div style="background: rgba(0,0,0,0.8); padding: 8px; border-radius: 4px; color: white;">${node.title}</div>`)
+                .nodeVal(node => {
+                    // Holonic layering: size based on importance
+                    if (node.__hidden) return 0.5;
+                    const importance = getNodeImportance(node);
+                    return importance * 2;
+                })
+                .nodeOpacity(node => node.__hidden ? 0.15 : 1.0)  // Full opacity for visibility
+                .nodeColor(node => {
+                    if (node.__hidden) {
+                        return isDarkMode ? 'rgba(120, 120, 120, 0.4)' : 'rgba(80, 80, 80, 0.4)';
+                    }
+                    if (highlightedNodes.has(node.id)) {
+                        return '#ffd700';
+                    }
+                    // Nodes as OPPOSITE of background color
+                    const baseColor = node.__color || (isDarkMode ? '#ffffff' : '#000000');
+                    return baseColor;
+                })
+                .linkWidth(link => link.similarity * 3)  // Thicker links
+                .linkOpacity(0.5)  // More visible
+                .linkColor(() => isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)')  // Pure contrast
                 .onNodeClick(node => showNodeInfo(node))
                 .onNodeHover(node => {
                     elem.style.cursor = node ? 'pointer' : null;
-                })
-                .d3Force('charge').strength(-100);
+                });
 
-            graph.enableNodeDrag(true);
-            graph.enableNavigationControls(true);
-            graph.showNavInfo(false);
+            // Configure forces
+            graph.d3Force('charge').strength(-120);
+            graph.d3Force('link').distance(50);
+
+            // Controls - gentler panning
+            const controls = graph.controls();
+            controls.enablePan = true;
+            controls.panSpeed = 0.5;  // Much gentler panning
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;  // More damping to prevent flying away
+            controls.maxDistance = 3000;  // Prevent zooming too far out
+            controls.minDistance = 100;   // Prevent zooming too close
+            controls.mouseButtons = {
+                LEFT: 2,   // Pan (move graph around)
+                MIDDLE: 1, // Zoom
+                RIGHT: 0   // Rotate
+            };
         }
 
-        // Load graph data
+        // Color scheme for categories - ULTRA SATURATED PURE COLORS
+        const categoryColorsDark = [
+            '#ffffff', '#ff0000', '#00ff00', '#ffff00', '#ff00ff',
+            '#00ffff', '#ff8800', '#ff0088', '#88ff00', '#0088ff',
+            '#8800ff', '#00ff88', '#ff8888', '#88ff88', '#8888ff'
+        ];
+
+        const categoryColorsLight = [
+            '#000000', '#990000', '#006600', '#996600', '#660099',
+            '#006666', '#aa3300', '#aa0055', '#559900', '#0055aa',
+            '#5500aa', '#009955', '#880000', '#008800', '#000088'
+        ];
+
+        function getColorForCategory(category, index) {
+            const colors = isDarkMode ? categoryColorsDark : categoryColorsLight;
+            return colors[index % colors.length];
+        }
+
+        // Media type colors for scenic mode - MAXIMUM CONTRAST
+        function getMediaTypeColors() {
+            return {
+                // Documents - Blues
+                'md': isDarkMode ? '#44ddff' : '#004488',
+                'txt': isDarkMode ? '#88ddff' : '#005599',
+                'pdf': isDarkMode ? '#ff4444' : '#cc0000',
+                'doc': isDarkMode ? '#66ccff' : '#0066aa',
+                'docx': isDarkMode ? '#66ccff' : '#0066aa',
+                // Images - Purples
+                'png': isDarkMode ? '#dd44ff' : '#660099',
+                'jpg': isDarkMode ? '#ff88ff' : '#770099',
+                'jpeg': isDarkMode ? '#ff88ff' : '#770099',
+                'gif': isDarkMode ? '#ee55ff' : '#880099',
+                'svg': isDarkMode ? '#ff44dd' : '#990099',
+                // Video - Yellows/Golds
+                'mp4': isDarkMode ? '#ffff00' : '#aa6600',
+                'mov': isDarkMode ? '#ffcc00' : '#996600',
+                'avi': isDarkMode ? '#ffdd44' : '#aa7700',
+                // Audio - Greens
+                'mp3': isDarkMode ? '#44ff44' : '#006600',
+                'wav': isDarkMode ? '#66ff66' : '#008800',
+                'm4a': isDarkMode ? '#88ff88' : '#009900',
+                // Code - Oranges
+                'js': isDarkMode ? '#ffaa44' : '#cc4400',
+                'py': isDarkMode ? '#44ddff' : '#004488',
+                'json': isDarkMode ? '#ffcc44' : '#aa6600',
+                // Default - Max contrast
+                'default': isDarkMode ? '#ffffff' : '#000000'
+            };
+        }
+
+        function getMediaType(filePath) {
+            if (!filePath) return getMediaTypeColors()['default'];
+            const extension = filePath.split('.').pop().toLowerCase();
+            const colors = getMediaTypeColors();
+            return colors[extension] || colors['default'];
+        }
+
+        function getNodeImportance(node) {
+            // Holonic layering: size based on connections and search matches
+            let importance = 1;
+            if (highlightedNodes.has(node.id)) importance += 2;
+            // Could add: connection count, tags, etc.
+            return importance;
+        }
+
+        // Load graph data - now loads ALL nodes
         async function loadGraph(query = null) {
             if (!API_URL) {
                 showError('API not connected. Please ensure services are running.');
@@ -381,11 +886,10 @@
             loading.style.display = 'block';
 
             try {
-                const limit = document.getElementById('limit-slider').value;
                 const threshold = document.getElementById('threshold-slider').value;
 
                 const body = {
-                    limit: parseInt(limit),
+                    limit: 300,  // Load maximum nodes
                     similarity_threshold: parseFloat(threshold)
                 };
 
@@ -406,15 +910,25 @@
                 const data = await response.json();
                 currentData = data;
 
-                // Update stats
-                document.getElementById('node-count').textContent = data.nodes.length;
-                document.getElementById('edge-count').textContent = data.edges.length;
+                // Assign colors to categories
+                const categories = [...new Set(data.nodes.map(n => n.category))];
+                categories.forEach((cat, idx) => {
+                    data.nodes.forEach(node => {
+                        if (node.category === cat) {
+                            node.__color = getColorForCategory(cat, idx);
+                        }
+                    });
+                });
 
-                const categories = new Set(data.nodes.map(n => n.category));
-                document.getElementById('category-count').textContent = categories.size;
+                // Store all data
+                allNodes = data.nodes;
+                allLinks = data.edges;
 
-                // Update graph
-                graph.graphData(data);
+                // Update category filters
+                updateCategoryFilters(categories);
+
+                // Apply current filters
+                applyFilters();
 
                 document.getElementById('error-container').innerHTML = '';
 
@@ -426,18 +940,114 @@
             }
         }
 
-        // Search graph
-        function searchGraph() {
-            const query = document.getElementById('search-input').value.trim();
-            if (!query) {
-                alert('Please enter a search query');
-                return;
+        // Update category filter chips
+        function updateCategoryFilters(categories) {
+            const container = document.getElementById('category-filters');
+            container.innerHTML = '';
+
+            categories.forEach((cat, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'chip active';
+                chip.textContent = cat || 'uncategorized';
+                chip.style.borderColor = getColorForCategory(cat, idx);
+                chip.onclick = () => toggleCategory(cat, chip);
+                container.appendChild(chip);
+                activeCategories.add(cat);
+            });
+        }
+
+        // Toggle category filter
+        function toggleCategory(category, chipElement) {
+            if (activeCategories.has(category)) {
+                activeCategories.delete(category);
+                chipElement.classList.remove('active');
+            } else {
+                activeCategories.add(category);
+                chipElement.classList.add('active');
             }
-            loadGraph(query);
+            applyFilters();
+        }
+
+        // Real-time search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchTerm = e.target.value.toLowerCase().trim();
+            applyFilters();
+        });
+
+        // Apply all filters and highlighting
+        function applyFilters() {
+            if (!allNodes.length) return;
+
+            highlightedNodes.clear();
+            let visibleCount = 0;
+
+            // Filter and highlight nodes
+            allNodes.forEach(node => {
+                const matchesCategory = activeCategories.has(node.category);
+                const matchesSearch = !searchTerm ||
+                    node.title.toLowerCase().includes(searchTerm) ||
+                    (node.text && node.text.toLowerCase().includes(searchTerm));
+
+                node.__hidden = !matchesCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    highlightedNodes.add(node.id);
+                }
+
+                if (matchesCategory) visibleCount++;
+            });
+
+            // Filter links to only show between visible nodes
+            const visibleNodeIds = new Set(allNodes.filter(n => !n.__hidden).map(n => n.id));
+            const visibleLinks = allLinks.filter(link =>
+                visibleNodeIds.has(link.source.id || link.source) &&
+                visibleNodeIds.has(link.target.id || link.target)
+            );
+
+            // Update graph
+            const graphData = {
+                nodes: allNodes,
+                links: visibleLinks
+            };
+
+            graph.graphData(graphData);
+
+            // Update stats
+            document.getElementById('total-node-count').textContent = allNodes.length;
+            document.getElementById('node-count').textContent = visibleCount;
+            document.getElementById('edge-count').textContent = visibleLinks.length;
+            document.getElementById('highlighted-count').textContent = highlightedNodes.size;
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            searchTerm = '';
+            document.getElementById('search-input').value = '';
+            highlightedNodes.clear();
+
+            // Reset all category chips
+            document.querySelectorAll('#category-filters .chip').forEach(chip => {
+                chip.classList.add('active');
+            });
+
+            // Re-enable all categories
+            activeCategories.clear();
+            allNodes.forEach(node => activeCategories.add(node.category));
+
+            applyFilters();
+        }
+
+        // Update slider values
+        function updateSlider(type) {
+            const value = document.getElementById(`${type}-slider`).value;
+            document.getElementById(`${type}-value`).textContent = parseFloat(value).toFixed(2);
         }
 
         // Load random sample
         function loadRandomGraph() {
+            searchTerm = '';
+            document.getElementById('search-input').value = '';
+            highlightedNodes.clear();
             loadGraph();
         }
 
@@ -446,66 +1056,254 @@
             graph.cameraPosition({ x: 0, y: 0, z: 1000 }, { x: 0, y: 0, z: 0 }, 1000);
         }
 
+        // Center graph with scenic zoom - finds actual center of mass
+        function centerGraph() {
+            if (!allNodes.length) return;
+
+            // Calculate center of mass of all visible nodes
+            const visibleNodes = allNodes.filter(n => !n.__hidden);
+            let sumX = 0, sumY = 0, sumZ = 0;
+
+            visibleNodes.forEach(node => {
+                if (node.x !== undefined) {
+                    sumX += node.x;
+                    sumY += node.y;
+                    sumZ += node.z;
+                }
+            });
+
+            const centerX = sumX / visibleNodes.length || 0;
+            const centerY = sumY / visibleNodes.length || 0;
+            const centerZ = sumZ / visibleNodes.length || 0;
+
+            // Position camera at scenic distance from center of mass
+            const distance = 600;  // Closer scenic distance
+            graph.cameraPosition(
+                { x: centerX, y: centerY, z: centerZ + distance },  // Camera position
+                { x: centerX, y: centerY, z: centerZ },             // Look at center of mass
+                2000                                                 // Smooth transition
+            );
+        }
+
+        // Toggle scenic mode
+        function toggleScenicMode() {
+            scenicMode = !scenicMode;
+            const icon = document.getElementById('scenic-icon');
+            const text = document.getElementById('scenic-text');
+
+            if (scenicMode) {
+                icon.textContent = '⏸';
+                text.textContent = 'Exit Scenic';
+
+                // Center and zoom for scenic view
+                centerGraph();
+
+                // Update node colors to media type
+                if (allNodes.length > 0) {
+                    allNodes.forEach(node => {
+                        if (!highlightedNodes.has(node.id) && !node.__hidden) {
+                            node.__color = getMediaType(node.file_path || node.title);
+                        }
+                    });
+                    applyFilters();
+                }
+
+                // Calculate center of mass for rotation
+                const visibleNodes = allNodes.filter(n => !n.__hidden && n.x !== undefined);
+                let sumX = 0, sumY = 0, sumZ = 0;
+                visibleNodes.forEach(node => {
+                    if (node.x !== undefined) {
+                        sumX += node.x;
+                        sumY += node.y;
+                        sumZ += node.z;
+                    }
+                });
+                const centerX = sumX / visibleNodes.length || 0;
+                const centerY = sumY / visibleNodes.length || 0;
+                const centerZ = sumZ / visibleNodes.length || 0;
+
+                // Start auto-rotation around center of mass
+                let angle = 0;
+                scenicAnimation = setInterval(() => {
+                    angle += 0.003;  // Slow rotation speed
+                    const distance = 600;
+                    const x = centerX + distance * Math.sin(angle);
+                    const z = centerZ + distance * Math.cos(angle);
+
+                    graph.cameraPosition(
+                        { x, y: centerY + 100, z },  // Rotating camera
+                        { x: centerX, y: centerY, z: centerZ },  // Looking at center of mass
+                        0  // No transition for smooth animation
+                    );
+                }, 50);
+
+            } else {
+                icon.textContent = '🎬';
+                text.textContent = 'Scenic Mode';
+
+                // Stop rotation
+                if (scenicAnimation) {
+                    clearInterval(scenicAnimation);
+                    scenicAnimation = null;
+                }
+
+                // Restore category colors
+                if (allNodes.length > 0) {
+                    const categories = [...new Set(allNodes.map(n => n.category))];
+                    categories.forEach((cat, idx) => {
+                        allNodes.forEach(node => {
+                            if (node.category === cat) {
+                                node.__color = getColorForCategory(cat, idx);
+                            }
+                        });
+                    });
+                    applyFilters();
+                }
+
+                // Reset to normal view
+                resetCamera();
+            }
+        }
+
+        // Semantic cluster analysis
+        async function analyzeSemanticClusters() {
+            if (!allNodes.length) {
+                showError('No data loaded to analyze');
+                return;
+            }
+
+            const insightsDiv = document.getElementById('semantic-insights');
+            insightsDiv.innerHTML = '<div style="padding: 8px;">🔍 Analyzing semantic patterns...</div>';
+
+            // Wait for layout to settle
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Analyze spatial clusters
+            const visibleNodes = allNodes.filter(n => !n.__hidden && n.x !== undefined);
+
+            // Calculate spatial clusters using simple k-means-like approach
+            const numClusters = Math.min(5, Math.ceil(visibleNodes.length / 20));
+            const clusters = [];
+
+            // Simple spatial clustering
+            const step = Math.ceil(visibleNodes.length / numClusters);
+            for (let i = 0; i < numClusters; i++) {
+                clusters.push({
+                    nodes: visibleNodes.slice(i * step, (i + 1) * step),
+                    themes: new Set()
+                });
+            }
+
+            // Analyze themes in each cluster
+            clusters.forEach((cluster, idx) => {
+                cluster.nodes.forEach(node => {
+                    if (node.category) cluster.themes.add(node.category);
+                    // Extract keywords from title
+                    const words = node.title.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+                    words.forEach(w => cluster.themes.add(w));
+                });
+            });
+
+            // Analyze category distribution
+            const categoryCount = {};
+            visibleNodes.forEach(node => {
+                categoryCount[node.category] = (categoryCount[node.category] || 0) + 1;
+            });
+
+            // Find underrepresented categories
+            const avgCount = visibleNodes.length / Object.keys(categoryCount).length;
+            const sparseCategories = Object.entries(categoryCount)
+                .filter(([cat, count]) => count < avgCount * 0.5)
+                .map(([cat, count]) => `${cat} (${count})`);
+
+            // Suggest new groupings
+            const commonWords = {};
+            visibleNodes.forEach(node => {
+                const words = node.title.toLowerCase().split(/\s+/).filter(w => w.length > 4);
+                words.forEach(word => {
+                    commonWords[word] = (commonWords[word] || 0) + 1;
+                });
+            });
+
+            const suggestedThemes = Object.entries(commonWords)
+                .filter(([word, count]) => count >= 3 && count <= visibleNodes.length * 0.3)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([word, count]) => `"${word}" (${count} docs)`);
+
+            // Build insights HTML
+            let insights = '<div style="max-height: 300px; overflow-y: auto;">';
+
+            insights += '<div style="padding: 8px; margin: 4px 0; border-radius: 6px; background: rgba(74, 158, 255, 0.15);">';
+            insights += '<strong>📊 Cluster Analysis:</strong><br>';
+            insights += `Found ${clusters.length} spatial clusters in your knowledge graph`;
+            insights += '</div>';
+
+            insights += '<div style="padding: 8px; margin: 4px 0; border-radius: 6px; background: rgba(255, 215, 0, 0.15);">';
+            insights += '<strong>💡 Suggested Groupings:</strong><br>';
+            if (suggestedThemes.length > 0) {
+                insights += suggestedThemes.join(', ');
+            } else {
+                insights += 'Add more content for theme suggestions';
+            }
+            insights += '</div>';
+
+            insights += '<div style="padding: 8px; margin: 4px 0; border-radius: 6px; background: rgba(255, 100, 100, 0.15);">';
+            insights += '<strong>🎯 Sparse Content Areas:</strong><br>';
+            if (sparseCategories.length > 0) {
+                insights += sparseCategories.join(', ') + ' - consider expanding these';
+            } else {
+                insights += 'Content distribution is balanced';
+            }
+            insights += '</div>';
+
+            insights += '<div style="padding: 8px; margin: 4px 0; border-radius: 6px; background: rgba(100, 255, 100, 0.15);">';
+            insights += '<strong>🔗 Connection Density:</strong><br>';
+            const avgConnections = (allLinks.length * 2) / visibleNodes.length;
+            insights += `Average ${avgConnections.toFixed(1)} connections per node. `;
+            if (avgConnections < 2) {
+                insights += 'Consider adding more cross-references between topics.';
+            } else if (avgConnections > 5) {
+                insights += 'Highly interconnected knowledge base!';
+            } else {
+                insights += 'Moderate interconnection.';
+            }
+            insights += '</div>';
+
+            insights += '<div style="padding: 8px; margin: 4px 0; border-radius: 6px; background: rgba(200, 100, 255, 0.15);">';
+            insights += '<strong>🌈 Category Diversity:</strong><br>';
+            const uniqueCategories = Object.keys(categoryCount).length;
+            insights += `${uniqueCategories} unique categories. `;
+            if (uniqueCategories < 3) {
+                insights += 'Consider organizing content into more specific categories.';
+            } else if (uniqueCategories > 10) {
+                insights += 'Rich categorical diversity!';
+            } else {
+                insights += 'Good categorical balance.';
+            }
+            insights += '</div>';
+
+            insights += '</div>';
+            insightsDiv.innerHTML = insights;
+        }
+
         // Show node details
         function showNodeInfo(node) {
-            const infoPanel = document.getElementById('node-info');
-
-            let tagsHtml = '';
-            if (node.tags && node.tags.length > 0) {
-                tagsHtml = '<div class="node-tags">' +
-                    node.tags.map(tag => `<span class="tag">#${tag}</span>`).join('') +
-                    '</div>';
-            }
-
-            infoPanel.innerHTML = `
-                <div class="node-title">${node.title}</div>
-                ${tagsHtml}
-                <div class="node-text">${node.text}</div>
-                <div style="font-size: 11px; color: #666; margin-bottom: 10px;">
-                    📁 ${node.file_path || 'N/A'}
-                </div>
-                <a href="${node.url}" class="node-link" target="_blank">
-                    Open in Obsidian →
-                </a>
-            `;
-
-            infoPanel.classList.add('visible');
-            highlightConnectedNodes(node);
+            document.getElementById('node-title').textContent = node.title;
+            document.getElementById('node-text').textContent = node.text || 'No description available';
+            document.getElementById('node-category').textContent = node.category || 'uncategorized';
+            document.getElementById('node-info').classList.add('visible');
         }
 
-        // Highlight nodes connected to selected node
-        function highlightConnectedNodes(selectedNode) {
-            if (!currentData) return;
-
-            const connectedNodeIds = new Set();
-            currentData.edges.forEach(edge => {
-                if (edge.source === selectedNode.id) connectedNodeIds.add(edge.target);
-                if (edge.target === selectedNode.id) connectedNodeIds.add(edge.source);
-            });
-
-            graph.nodeColor(node => {
-                if (node.id === selectedNode.id) return '#ff4444';
-                if (connectedNodeIds.has(node.id)) return '#44ff44';
-                return graph.nodeAutoColorBy()(node);
-            });
-        }
-
-        // Handle Enter key in search
-        document.getElementById('search-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                searchGraph();
-            }
-        });
-
-        // Hide node info when clicking background
+        // Hide node info on background click
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('#node-info') && !e.target.closest('canvas')) {
+            if (!e.target.closest('#node-info') && !e.target.closest('canvas') && !e.target.closest('#controls')) {
                 document.getElementById('node-info').classList.remove('visible');
-                if (currentData) {
-                    graph.nodeColor(graph.nodeAutoColorBy());
-                }
             }
         });
+
+        // Reload when threshold changes
+        document.getElementById('threshold-slider').addEventListener('change', () => loadRandomGraph());
 
         // Initialize on load
         window.addEventListener('load', async () => {
@@ -515,8 +1313,7 @@
             if (connected) {
                 loadRandomGraph();
             } else {
-                document.getElementById('loading').style.display = 'none';
-                showError('Cannot connect to API. Please ensure Docker services are running:<br>docker-compose up -d');
+                showError('Could not connect to API. Please check that services are running.');
             }
         });
     </script>
