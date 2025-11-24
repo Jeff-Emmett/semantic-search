@@ -78,13 +78,21 @@ async def index_file(
         links = extract_wikilinks(body)
         body_clean = clean_content(body)
 
-        # Skip if no meaningful content
-        if len(body_clean) < 20:
+        # Skip if no meaningful content (lowered threshold to capture short notes)
+        if len(body_clean) < 1:
             return None
 
         # Get file metadata
         stat = os.stat(file_path)
         relative_path = str(file_path.relative_to(vault_path))
+
+        # Convert datetime objects in frontmatter to ISO strings
+        serializable_frontmatter = {}
+        for key, value in frontmatter.items():
+            if isinstance(value, datetime):
+                serializable_frontmatter[key] = value.isoformat()
+            else:
+                serializable_frontmatter[key] = value
 
         # Build metadata
         metadata = {
@@ -97,7 +105,7 @@ async def index_file(
             "tags": tags,
             "links": links[:10],  # Limit to first 10 links
             "link_count": len(links),
-            **frontmatter  # Include all frontmatter fields
+            **serializable_frontmatter  # Include all frontmatter fields
         }
 
         # Create document
