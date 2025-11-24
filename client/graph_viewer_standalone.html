@@ -702,7 +702,7 @@
 
             // Update graph background
             if (graph) {
-                graph.backgroundColor(isDarkMode ? '#0a0a0a' : '#f5f5f5');
+                graph.backgroundColor(isDarkMode ? '#000000' : '#ffffff');
 
                 // Reassign colors to all nodes for new theme
                 if (allNodes.length > 0) {
@@ -764,13 +764,13 @@
         function initGraph() {
             const elem = document.getElementById('graph-container');
             graph = ForceGraph3D()(elem)
-                .backgroundColor(isDarkMode ? '#0a0a0a' : '#f5f5f5')
+                .backgroundColor(isDarkMode ? '#000000' : '#ffffff')
                 .nodeLabel(node => `<div style="background: rgba(0,0,0,0.8); padding: 8px; border-radius: 4px; color: white;">${node.title}</div>`)
                 .nodeVal(node => {
                     // Holonic layering: size based on importance
                     if (node.__hidden) return 0.5;
                     const importance = getNodeImportance(node);
-                    return importance * 2;
+                    return importance * 3;  // Larger nodes for better visibility
                 })
                 .nodeOpacity(node => node.__hidden ? 0.15 : 1.0)  // Full opacity for visibility
                 .nodeColor(node => {
@@ -780,8 +780,8 @@
                     if (highlightedNodes.has(node.id)) {
                         return '#ffd700';
                     }
-                    // Nodes as OPPOSITE of background color
-                    const baseColor = node.__color || (isDarkMode ? '#ffffff' : '#000000');
+                    // Use assigned category color or bright default
+                    const baseColor = node.__color || (isDarkMode ? '#00ffff' : '#0000ff');  // Bright cyan or blue
                     return baseColor;
                 })
                 .linkWidth(link => link.similarity * 3)  // Thicker links
@@ -799,7 +799,7 @@
             // Controls - gentler panning
             const controls = graph.controls();
             controls.enablePan = true;
-            controls.panSpeed = 0.5;  // Much gentler panning
+            controls.panSpeed = 0.15;  // Very gentle panning
             controls.enableDamping = true;
             controls.dampingFactor = 0.25;  // More damping to prevent flying away
             controls.maxDistance = 3000;  // Prevent zooming too far out
@@ -811,17 +811,17 @@
             };
         }
 
-        // Color scheme for categories - ULTRA SATURATED PURE COLORS
+        // Color scheme for categories - MAXIMUM NEON CONTRAST
         const categoryColorsDark = [
-            '#ffffff', '#ff0000', '#00ff00', '#ffff00', '#ff00ff',
-            '#00ffff', '#ff8800', '#ff0088', '#88ff00', '#0088ff',
-            '#8800ff', '#00ff88', '#ff8888', '#88ff88', '#8888ff'
+            '#00ffff', '#ff00ff', '#ffff00', '#00ff00', '#ff0000',  // Bright cyan, magenta, yellow, green, red
+            '#ff8800', '#00ff88', '#ff0088', '#88ff00', '#8800ff',  // Orange, spring green, pink, lime, purple
+            '#0088ff', '#ff8888', '#88ff88', '#8888ff', '#ffffff'   // Sky blue, coral, mint, lavender, white
         ];
 
         const categoryColorsLight = [
-            '#000000', '#990000', '#006600', '#996600', '#660099',
-            '#006666', '#aa3300', '#aa0055', '#559900', '#0055aa',
-            '#5500aa', '#009955', '#880000', '#008800', '#000088'
+            '#0000ff', '#ff0000', '#008800', '#ff00ff', '#006600',  // Pure blue, red, green, magenta, dark green
+            '#cc0000', '#000088', '#880088', '#008888', '#884400',  // Dark red, navy, purple, teal, brown
+            '#aa0000', '#0000aa', '#00aa00', '#aa00aa', '#000000'   // Blood red, dark blue, dark green, violet, black
         ];
 
         function getColorForCategory(category, index) {
